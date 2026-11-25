@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinSecure Solutions - Employee Portal Security</title>
+    <style>
+        :root {
+            --primary-color: #1e3d59;
+            --accent-color: #17b978;
+            --danger-color: #ff5722;
+            --bg-color: #f5f7fa;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        header p {
+            color: #666;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-top: 4px solid var(--primary-color);
+        }
+
+        h2 {
+            margin-top: 0;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 0.95rem;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: opacity 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .btn-success {
+            background-color: var(--accent-color);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+        }
+
+        .output-box {
+            margin-top: 15px;
+            padding: 12px;
+            background: #1e1e1e;
+            color: #00ff66;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+            min-height: 30px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        @media (max-width: 600px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>FinSecure Solutions</h1>
+    
+        </header>
+
+        <!-- Module 1: Secure Registration & Password Policy -->
+        <div class="card">
+            <h2>1. Secure Registration & Password Policy Enforcement</h2>
+            <p>Enforces minimum length, complexity requirements (uppercase, lowercase, numbers, symbols), and secure password hashing.</p>
+            <form id="regForm" onsubmit="handleRegistration(event)">
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label for="regUser">Employee Username:</label>
+                        <input type="text" id="regUser" placeholder="e.g. john_doe" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regEmail">Work Email:</label>
+                        <input type="email" id="regEmail" placeholder="john@finsecure.com" required>
+                    </div>
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label for="regPass">Password (Min 8 chars, 1 Upper, 1 Number, 1 Symbol):</label>
+                        <input type="password" id="regPass" placeholder="Enter secure password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regConfirmPass">Confirm Password:</label>
+                        <input type="password" id="regConfirmPass" placeholder="Re-enter password" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn-success">Register Securely</button>
+            </form>
+            <div id="regOutput" class="output-box">Registration status and hash output will appear here...</div>
+        </div>
+
+        <!-- Module 2: XSS Prevention & Output Encoding -->
+        <div class="card">
+            <h2>2. Cross-Site Scripting (XSS) Prevention</h2>
+            <p>Test input handling. Try inserting script tags like &lt;script&gt;alert('XSS')&lt;/script&gt; to see how output encoding protects the portal.</p>
+            <div class="form-group">
+                <label for="xssInput">Employee Comment / Bio:</label>
+                <input type="text" id="xssInput" placeholder="Enter public profile note or payload">
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button onclick="simulateXSS(false)" class="btn-danger">Render Vulnerable (Raw)</button>
+                <button onclick="simulateXSS(true)" class="btn-success">Render Secure (Encoded)</button>
+            </div>
+            <div id="xssOutputContainer" style="margin-top: 15px; padding: 10px; border: 1px dashed #ccc; background: #fff;">
+                <strong>Rendered Output:</strong> <span id="xssRenderArea">None</span>
+            </div>
+        </div>
+
+        <!-- Module 3: SQL Injection Defense Simulator -->
+        <div class="card">
+            <h2>3. SQL Injection Defense (Parameterized Queries vs Dynamic SQL)</h2>
+            <p>Simulate database search queries for employee records. Test SQL injection strings like <code>' OR '1'='1</code>.</p>
+            <div class="form-group">
+                <label for="sqlInput">Search Employee Name / ID:</label>
+                <input type="text" id="sqlInput" placeholder="e.g. Alice or ' OR '1'='1">
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button onclick="simulateSQLQuery(false)" class="btn-danger">Run Vulnerable Query</button>
+                <button onclick="simulateSQLQuery(true)" class="btn-success">Run Secure Parameterized Query</button>
+            </div>
+            <div id="sqlOutput" class="output-box">Query execution log and records returned will appear here...</div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- Module 1: Secure Registration & Hashing ---
+        function handleRegistration(event) {
+            event.preventDefault();
+            const username = document.getElementById('regUser').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const password = document.getElementById('regPass').value;
+            const confirmPassword = document.getElementById('regConfirmPass').value;
+            const outputBox = document.getElementById('regOutput');
+
+            // Password Policy Regex: Min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special char
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!\%*?&]{8,}$/;
+
+            if (!passwordRegex.test(password)) {
+                outputBox.textContent = "SECURITY ERROR: Password does not meet complexity requirements!\n" +
+                                       "- Minimum 8 characters\n" +
+                                       "- At least one uppercase letter\n" +
+                                       "- At least one number\n" +
+                                       "- At least one special character (@$!%*?&)";
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                outputBox.textContent = "VALIDATION ERROR: Password and Confirm Password do not match.";
+                return;
+            }
+
+            // Simulating secure password hashing (like bcrypt / argon2)
+            const simulatedHash = "$2b$10$" + btoa(password).substring(0, 22) + "SecureHashedStringMock";
+
+            outputBox.textContent = `SUCCESS: User '${username}' registered securely!\n` +
+                                   `Email: ${email}\n` +
+                                   `Stored Password Hash (Never plain text): ${simulatedHash}\n` +
+                                   `Status: Input validated, sanitized, and stored with cryptographic hash.`;
+        }
+
+        // --- Module 2: XSS Prevention ---
+        function simulateXSS(isSecure) {
+            const rawInput = document.getElementById('xssInput').value;
+            const renderArea = document.getElementById('xssRenderArea');
+
+            if (isSecure) {
+                // Output Encoding: Convert special characters to HTML entities to neutralize script execution
+                const encodedInput = rawInput
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
+                
+                renderArea.innerHTML = encodedInput; // Safe rendering as text/entities
+            } else {
+                // Vulnerable rendering: Directly inserting raw user input into DOM
+                renderArea.innerHTML = rawInput; 
+            }
+        }
+
+        // --- Module 3: SQL Injection Simulation ---
+        function simulateSQLQuery(isParameterized) {
+            const userInput = document.getElementById('sqlInput').value;
+            const outputBox = document.getElementById('sqlOutput');
+
+            // Mock database

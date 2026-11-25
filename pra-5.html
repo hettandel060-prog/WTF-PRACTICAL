@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Practical 5 - CityCare Patient Registration</title>
+  <style>
+    :root {
+      --primary-color: #0066cc;
+      --bg-color: #f4f7f6;
+      --card-bg: #ffffff;
+      --text-color: #333333;
+      --error-color: #dc3545;
+      --success-color: #28a745;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 20px;
+    }
+
+    .form-container {
+      max-width: 600px;
+      margin: 20px auto;
+      background: var(--card-bg);
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: var(--primary-color);
+      margin-bottom: 25px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary-color);
+      outline: none;
+    }
+
+    .radio-group, .checkbox-group {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .radio-group input, .checkbox-group input {
+      width: auto;
+    }
+
+    .error-msg {
+      color: var(--error-color);
+      font-size: 12px;
+      margin-top: 4px;
+      display: block;
+      min-height: 16px;
+    }
+
+    .strength-meter {
+      height: 5px;
+      width: 100%;
+      background-color: #ddd;
+      margin-top: 5px;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .strength-bar {
+      height: 100%;
+      width: 0%;
+      transition: width 0.3s, background-color 0.3s;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0052a3;
+    }
+
+    #successAlert {
+      display: none;
+      background-color: #d4edda;
+      color: #155724;
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      border: 1px solid #c3e6cb;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="form-container">
+    <h2>CityCare Hospital Patient Registration</h2>
+    
+    <div id="successAlert">Registration successful! Your appointment request has been submitted.</div>
+
+    <form id="registrationForm" novalidate>
+      
+      <!-- Full Name -->
+      <div class="form-group">
+        <label for="fullName">Full Name *</label>
+        <input type="text" id="fullName" placeholder="e.g. John Doe">
+        <span class="error-msg" id="nameError"></span>
+      </div>
+
+      <!-- Email Address -->
+      <div class="form-group">
+        <label for="email">Email Address *</label>
+        <input type="email" id="email" placeholder="e.g. john@example.com">
+        <span class="error-msg" id="emailError"></span>
+      </div>
+
+      <!-- Mobile Number -->
+      <div class="form-group">
+        <label for="mobile">Mobile Number *</label>
+        <input type="tel" id="mobile" placeholder="10-digit mobile number">
+        <span class="error-msg" id="mobileError"></span>
+      </div>
+
+      <!-- Date of Birth -->
+      <div class="form-group">
+        <label for="dob">Date of Birth *</label>
+        <input type="date" id="dob">
+        <span class="error-msg" id="dobError"></span>
+      </div>
+
+      <!-- Gender (Radio Buttons) -->
+      <div class="form-group">
+        <label>Gender *</label>
+        <div class="radio-group">
+          <label><input type="radio" name="gender" value="Male"> Male</label>
+          <label><input type="radio" name="gender" value="Female"> Female</label>
+          <label><input type="radio" name="gender" value="Other"> Other</label>
+        </div>
+        <span class="error-msg" id="genderError"></span>
+      </div>
+
+      <!-- Department (Dropdown) -->
+      <div class="form-group">
+        <label for="department">Select Department *</label>
+        <select id="department">
+          <option value="">-- Choose Department --</option>
+          <option value="Cardiology">Cardiology</option>
+          <option value="Neurology">Neurology</option>
+          <option value="Orthopedics">Orthopedics</option>
+          <option value="Pediatrics">Pediatrics</option>
+          <option value="General Medicine">General Medicine</option>
+        </select>
+        <span class="error-msg" id="deptError"></span>
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label for="password">Password *</label>
+        <input type="password" id="password" placeholder="At least 8 chars, 1 uppercase, 1 digit, 1 symbol">
+        <div class="strength-meter"><div id="strengthBar" class="strength-bar"></div></div>
+        <span class="error-msg" id="passwordError"></span>
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password *</label>
+        <input type="password" id="confirmPassword" placeholder="Re-enter password">
+        <span class="error-msg" id="confirmPasswordError"></span>
+      </div>
+
+      <!-- Terms & Conditions Checkbox -->
+      <div class="form-group">
+        <div class="checkbox-group">
+          <input type="checkbox" id="terms">
+          <label for="terms" style="font-weight: normal; margin-bottom: 0;">I agree to the terms and privacy policy *</label>
+        </div>
+        <span class="error-msg" id="termsError"></span>
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit">Register Patient</button>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById('registrationForm');
+    const passwordInput = document.getElementById('password');
+    const strengthBar = document.getElementById('strengthBar');
+    const successAlert = document.getElementById('successAlert');
+
+    // Regular Expression patterns
+    const patterns = {
+      name: /^[A-Za-z\s]{3,30}$/,                           // Only letters & spaces, 3-30 chars
+      email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, // Standard email pattern
+      mobile: /^[6-9]\d{9}$/,                                // 10 digits starting with 6, 7, 8, or 9
+      password: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+    };
+
+    // Live Password Strength Indicator
+    passwordInput.addEventListener('input', () => {
+      const val = passwordInput.value;
+      let score = 0;
+
+      if (val.length >= 8) score++;
+      if (/[A-Z]/.test(val)) score++;
+      if (/[0-9]/.test(val)) score++;
+      if (/[@$!%*?&]/.test(val)) score++;
+
+      switch (score) {
+        case 0:
+        case 1:
+          strengthBar.style.width = '25%';
+          strengthBar.style.backgroundColor = '#dc3545';
+          break;
+        case 2:
+          strengthBar.style.width = '50%';
+          strengthBar.style.backgroundColor = '#ffc107';
+          break;
+        case 3:
+          strengthBar.style.width = '75%';
+          strengthBar.style.backgroundColor = '#17a2b8';
+          break;
+        case 4:
+          strengthBar.style.width = '100%';
+          strengthBar.style.backgroundColor = '#28a745';
+          break;
+      }
+    });
+
+    // Form Submit Handler
+    form.addEventListener('submit', (e) => {
+      e.preventDefault(); // Stop normal form submission
+      
+      // Clear previous error messages
+      document.querySelectorAll('.error-msg').forEach(el => el.textContent = '');
+      successAlert.style.display = 'none';
+
+      let isValid = true;
+
+      // 1. Sanitize & Validate Full Name
+      const nameVal = document.getElementById('fullName').value.trim();
+      if (!nameVal) {
+        document.getElementById('nameError').textContent = 'Full Name is required.';
+        isValid = false;
+      } else if (!patterns.name.test(nameVal)) {
+        document.getElementById('nameError').textContent = 'Name must contain only alphabets (min 3 chars).';
+        isValid = false;
+      }
+
+      // 2. Sanitize & Validate Email
+      const emailVal = document.getElementById('email').value.trim();
+      if (!emailVal) {
+        document.getElementById('emailError').textContent = 'Email address is required.';
+        isValid = false;
+      } else if (!patterns.email.test(emailVal)) {
+        document.getElementById('emailError').textContent = 'Please enter a valid email address.';
+        isValid = false;
+      }
+
+      // 3. Sanitize & Validate Mobile Number
+      const mobileVal = document.getElementById('mobile').value.trim();
+      if (!mobileVal) {
+        document.getElementById('mobileError').textContent = 'Mobile number is required.';
+        isValid = false;
+      } else if (!patterns.mobile.test(mobileVal)) {
+        document.getElementById('mobileError').textContent = 'Enter a valid 10-digit Indian mobile number.';
+        isValid = false;
+      }
+
+      // 4. Validate Date of Birth
+      const dobVal = document.getElementById('dob').value;
+      if (!dobVal) {
+        document.getElementById('dobError').textContent = 'Date of birth is required.';
+        isValid = false;
+      }
+
+      // 5. Validate Gender Radio Buttons
+      const genderSelected = document.querySelector('input[name="gender"]:checked');
+      if (!genderSelected) {
+        document.getElementById('genderError').textContent = 'Please select a gender.';
+        isValid = false;
+      }
+
+      // 6. Validate Department Select
+      const deptVal = document.getElementById('department').value;
+      if (!deptVal) {
+        document.getElementById('deptError').textContent = 'Please select a department.';
+        isValid = false;
+      }
+
+      // 7. Validate Password
+      const passVal = passwordInput.value;
+      if (!passVal) {
+        document.getElementById('passwordError').textContent = 'Password is required.';
+        isValid = false;
+      } else if (!patterns.password.test(passVal)) {
+        document.getElementById('passwordError').textContent = 'Must be 8+ chars with uppercase, lowercase, digit, & special char.';
+        isValid = false;
+      }
+
+      // 8. Validate Confirm Password
+      const confirmPassVal = document.getElementById('confirmPassword').value;
+      if (!confirmPassVal) {
+        document.getElementById('confirmPasswordError').textContent = 'Please confirm your password.';
+        isValid = false;
+      } else if (passVal !== confirmPassVal) {
+        document.getElementById('confirmPasswordError').textContent = 'Passwords do not match.';
+        isValid = false;
+      }
+
+      // 9. Validate Terms Checkbox
+      const termsChecked = document.getElementById('terms').checked;
+      if (!termsChecked) {
+        document.getElementById('termsError').textContent = 'You must accept the terms & conditions.';
+        isValid = false;
+      }
+
+      // Final Submission Action
+      if (isValid) {
+        successAlert.style.display = 'block';
+        form.reset();
+        strengthBar.style.width = '0%';
+      }
+    });
+  </script>
+</body>
+</html>

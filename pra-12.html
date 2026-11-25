@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GameVault - Online Gaming Store</title>
+    
+    <!-- Bootstrap 5 CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        .hero-banner {
+            background: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.85)), url('https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=1200&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+        .output-box {
+            background: #1e1e1e;
+            color: #00ff66;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans">
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-slate-950 sticky-top px-4 shadow-md border-b border-slate-800">
+        <div class="container-fluid">
+            <a class="navbar-brand font-extrabold text-cyan-400 text-xl tracking-wider" href="#">🎮 GameVault</a>
+            <button class="navbar-toggler border-slate-700" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-end" id="navbarNav">
+                <ul class="navbar-nav space-x-2">
+                    <li class="nav-item"><a class="nav-link active text-cyan-300 font-semibold" href="#">Home</a></li>
+                    <li class="nav-item"><a class="nav-link text-slate-300" href="#api-section">Trending Store API</a></li>
+                    <li class="nav-item"><a class="nav-link text-slate-300" href="#crud-section">Inventory CRUD</a></li>
+                    <li class="nav-item"><a class="nav-link text-slate-300" href="#security-section">Secure Member Portal</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero-banner text-white text-center py-24 px-4 border-b border-slate-800">
+        <div class="max-w-3xl mx-auto">
+            <h1 class="text-4xl md:text-6xl font-extrabold mb-4 tracking-tight text-cyan-400">Level Up Your Gaming Library</h1>
+            <p class="text-lg text-slate-300 mb-8">Discover top-rated games, consoles, and gaming gear with instant delivery and secure checkout.</p>
+            <a href="#api-section" class="btn btn-info btn-lg px-8 font-bold text-slate-950 bg-cyan-400 hover:bg-cyan-300 border-0 shadow-lg">Browse Store</a>
+        </div>
+    </header>
+
+    <main class="container my-5">
+
+        <!-- MODULE 1: REST API Integration & JSON Exchange -->
+        <section id="api-section" class="card bg-slate-800 border border-slate-700 shadow-lg mb-5 p-4 rounded-xl text-slate-100">
+            <div class="card-body">
+                <h2 class="text-2xl font-bold text-cyan-400 mb-2">1. Trending Catalog (REST API Integration)</h2>
+                <p class="text-slate-400 mb-4">Fetch real-time gaming merchandise dynamically via asynchronous HTTP GET requests and JSON parsing.</p>
+                
+                <button onclick="fetchApiProducts()" class="btn btn-info font-semibold bg-cyan-500 hover:bg-cyan-400 text-slate-950 border-0 px-4">Load Featured Catalog (GET)</button>
+                <div id="api-status" class="mt-3 text-sm font-semibold"></div>
+                
+                <div id="api-product-grid" class="row g-3 mt-3">
+                    <!-- Dynamic API Cards load here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- MODULE 2: Database CRUD Operations -->
+        <section id="crud-section" class="card bg-slate-800 border border-slate-700 shadow-lg mb-5 p-4 rounded-xl text-slate-100">
+            <div class="card-body">
+                <h2 class="text-2xl font-bold text-emerald-400 mb-2">2. Store Inventory Management (CRUD Operations)</h2>
+                <p class="text-slate-400 mb-4">Admin dashboard to Create, Read, and Delete gaming stock items from the database.</p>
+
+                <!-- Add Form -->
+                <form id="crud-form" onsubmit="handleCrudSubmit(event)" class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <input type="text" id="itemName" class="form-control bg-slate-900 border-slate-700 text-slate-100 placeholder-slate-500" placeholder="Game or Console Name" required>
+                    </div>
+                    <div class="col-md-4">
+                        <input type="number" id="itemPrice" class="form-control bg-slate-900 border-slate-700 text-slate-100 placeholder-slate-500" placeholder="Price ($)" step="0.01" required>
+                    </div>
+                    <div class="col-md-4">
+                        <button type="submit" class="btn btn-success w-100 font-semibold bg-emerald-600 hover:bg-emerald-500 border-0">Add Item (Create)</button>
+                    </div>
+                </form>
+
+                <!-- Table -->
+                <div class="table-responsive">
+                    <table class="table table-dark table-striped table-hover align-middle border border-slate-700 rounded overflow-hidden">
+                        <thead class="bg-slate-950 text-emerald-400">
+                            <tr>
+                                <th>ID</th>
+                                <th>Product Name</th>
+                                <th>Price</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="crudTableBody">
+                            <!-- Dynamic rows loaded via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- MODULE 3: Web Security, Password Policy & XSS Defense -->
+        <section id="security-section" class="card bg-slate-800 border border-slate-700 shadow-lg mb-5 p-4 rounded-xl text-slate-100">
+            <div class="card-body">
+                <h2 class="text-2xl font-bold text-rose-400 mb-2">3. Member Portal Security & Validation</h2>
+                <p class="text-slate-400 mb-4">Enforces strong password complexity rules, cryptographic hashing simulation, and XSS output sanitization.</p>
+
+                <div class="row g-4">
+                    <!-- Secure Registration -->
+                    <div class="col-md-6">
+                        <div class="p-4 border border-slate-700 rounded-lg bg-slate-900">
+                            <h5 class="font-bold mb-3 text-slate-200">Gamer Registration & Hashing</h5>
+                            <form id="secForm" onsubmit="handleSecureRegistration(event)">
+                                <div class="mb-3">
+                                    <input type="text" id="secUser" class="form-control bg-slate-800 border-slate-700 text-slate-100 placeholder-slate-500" placeholder="GamerTag" required>
+                                </div>
+                                <div class="mb-3">
+                                    <input type="password" id="secPass" class="form-control bg-slate-800 border-slate-700 text-slate-100 placeholder-slate-500" placeholder="Password (Min 8 chars, Upper, Number, Symbol)" required>
+                                </div>
+                                <button type="submit" class="btn btn-light w-100 font-bold bg-slate-200 hover:bg-white">Register Securely</button>
+                            </form>
+                            <div id="secOutput" class="output-box mt-3">Waiting for input...</div>
+                        </div>
+                    </div>
+
+                    <!-- XSS Prevention Test -->
+                    <div class="col-md-6">
+                        <div class="p-4 border border-slate-700 rounded-lg bg-slate-900">
+                            <h5 class="font-bold mb-3 text-slate-200">XSS Output Encoding Defense</h5>
+                            <div class="mb-3">
+                                <input type="text" id="xssInput" class="form-control bg-slate-800 border-slate-700 text-slate-100 placeholder-slate-500" placeholder="Try &lt;script&gt;alert(1)&lt;/script&gt;">
+                            </div>
+                            <div class="d-flex gap-2 mb-3">
+                                <button onclick="renderXSS(false)" class="btn btn-outline-danger btn-sm w-50">Render Raw (Vulnerable)</button>
+                                <button onclick="renderXSS(true)" class="btn btn-outline-success btn-sm w-50">Render Encoded (Secure)</button>
+                            </div>
+                            <div class="p-3 bg-slate-800 border border-slate-700 rounded mt-2">
+                                <strong>Sanitized Output:</strong> <span id="xssResult" class="text-cyan-300">None</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 text-slate-400 text-center py-5 border-t border-slate-800">
+        <p class="text-sm mb-0">&copy; 2026 GameVault Store | Built for Web Technology Framework (Practical 12)</p>
+    </footer>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // --- 1. REST API Integration Script ---
+        async function fetchApiProducts() {
+            const statusEl = document.getElementById('api-status');
+            const gridEl = document.getElementById('api-product-grid');
+            statusEl.textContent = 'Fetching gaming catalog from REST API...';
+            statusEl.className = 'mt-3 text-sm text-cyan-400';
+            gridEl.innerHTML = '';
+
+            try {
+                const response = await fetch('https://fakestoreapi.com/products?limit=3');
+                if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+                
+                const data = await response.json();
+                statusEl.textContent = 'Success! Parsed JSON data retrieved from API.';
+                statusEl.className = 'mt-3 text-sm text-emerald-400';
+
+                data.forEach(item => {
+                    gridEl.innerHTML += `
+                        <div class="col-md-4">
+                            <div class="card h-100 p-3 bg-slate-900 border border-slate-700 shadow-sm text-slate-100">
+                                <img src="${item.image}" class="card-img-top mx-auto p-2 bg-white rounded" style="height: 120px; object-fit: contain;" alt="Game Item">
+                                <div class="card-body d-flex flex-column justify-between mt-2">
+                                    <h6 class="font-bold text-slate-200">${item.title.substring(0, 25)}...</h6>
+                                    <p class="text-emerald-400 font-extrabold mt-2">$${item.price}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (error) {
+                statusEl.textContent = 'API Error: ' + error.message;
+                statusEl.className = 'mt-3 text-sm text-rose-400';
+            }
+        }
+
+        // --- 2. Database CRUD Operations Script ---
+        let inventory = [
+            { id: 1, name: 'Cyberpunk 2077 (PS5)', price: 49.99 },
+            { id: 2, name: 'Wireless Gaming Controller', price: 59.99 }
+        ];
+
+        function renderCrudTable() {
+            const tbody = document.getElementById('crudTableBody');
+            tbody.innerHTML = '';
+            inventory.forEach(item => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${item.id}</td>
+                        <td>${item.name}</td>
+                        <td>$${item.price.toFixed(2)}</td>
+                        <td>
+                            <button class="btn btn-sm btn-danger bg-rose-600 hover:bg-rose-500 border-0" onclick="deleteCrudItem(${item.id})">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function handleCrudSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('itemName').value;
+            const price = parseFloat(document.getElementById('itemPrice').value);
+            
+            const newItem = {
+                id: inventory.length > 0 ? inventory[inventory.length - 1].id + 1 : 1,
+                name,
+                price
+            };
+            inventory.push(newItem);
+            document.getElementById('crud-form').reset();
+            renderCrudTable();
+        }
+
+        function deleteCrudItem(id) {
+            inventory = inventory.filter(i => i.id !== id);
+            renderCrudTable();
+        }
+
+        // --- 3. Web Security & Password Policy Script ---
+        function handleSecureRegistration(e) {
+            e.preventDefault();
+            const username = document.getElementById('secUser').value;
+            const password = document.getElementById('secPass').value;
+            const outputBox = document.getElementById('secOutput');
+
+            // Regex: Min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special char
+            const passRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+            if (!passRegex.test(password)) {
+                outputBox.textContent = "SECURITY ERROR: Password must have min 8 chars, 1 uppercase, 1 number & 1 special symbol!";
+                outputBox.style.color = "#f43f5e";
+                return;
+            }
+
+            // Simulate secure cryptographic password hashing
+            const mockHash = "$2b$10$" + btoa(password).substring(0, 16) + "GameVaultHashToken";
+            outputBox.textContent = `SUCCESS: Gamer '${username}' registered.\nStored Hash: ${mockHash}\nStatus: Input validated and hashed securely.`;
+            outputBox.style.color = "#34d399";
+        }
+
+        function renderXSS(isSecure) {
+            const inputVal = document.getElementById('xssInput').value;
+            const resultEl = document.getElementById('xssResult');
+
+            if (isSecure) {
+                // Output Encoding defense against XSS
+                const encoded = inputVal.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                resultEl.textContent = encoded;
+            } else {
+                // Raw unsafe rendering
+                resultEl.innerHTML = inputVal;
+            }
+        }
+
+        // Initial render for CRUD table on load
+        renderCrudTable();
+    </script>
+</body>
+</html>
